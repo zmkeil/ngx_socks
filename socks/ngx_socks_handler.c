@@ -24,8 +24,6 @@ static void ngx_socks_init_session(ngx_connection_t *c);
 void
 ngx_socks_close_connection(ngx_connection_t *c)
 {
-    ngx_pool_t  *pool;
-
 
 	if(!c) {
 		return;
@@ -33,13 +31,8 @@ ngx_socks_close_connection(ngx_connection_t *c)
 
     c->destroyed = 1;
 	
-    pool = c->pool;
-
     ngx_close_connection(c);
 
-	if(pool) {
-		ngx_destroy_pool(pool);
-	}
 }
 
 static u_char *
@@ -94,6 +87,7 @@ ngx_socks_finalize_session(ngx_socks_session_t *s, char *msg)
 {
 	ngx_connection_t	*c;
 	ngx_connection_t 	*remote_c=NULL;
+	ngx_pool_t			*pool=NULL;
 
 	c = s->connection;
 	remote_c = s->r_connection;
@@ -101,11 +95,17 @@ ngx_socks_finalize_session(ngx_socks_session_t *s, char *msg)
     ngx_log_error(NGX_ERROR_ERR, c->log, 0,
                    "^^%s^^\tclose socks connection: %d.%d\t", msg, c->fd, remote_c ? remote_c->fd:-1);
 
+	pool = c->pool;
+
 	if(c) {
 		ngx_socks_close_connection(c);
 	}
 	if(remote_c) {
 		ngx_socks_close_connection(remote_c);
+	}
+
+	if(pool) {
+		ngx_destroy_pool(pool);
 	}
 }
 
