@@ -1,5 +1,5 @@
 ngx_socks
-
+=========
 
 SOCKS5 proxy based on nginx
 
@@ -13,13 +13,16 @@ SOCKS5 proxy based on nginx
 
 
 nginx.conf
-
+==========
 
 worker_process 2;
 
 socks {
 
   server {
+  
     listen 1080;
+    
   }
+  
 }
